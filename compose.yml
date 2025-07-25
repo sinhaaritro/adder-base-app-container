@@ -1,0 +1,23 @@
+# Using a modern version of the compose file format
+version: "3.8"
+
+services:
+  # Define a name for our service
+  adder-app:
+    # Instruction to build the container image
+    build:
+      # Look for the 'Containerfile' in the current directory (.)
+      context: .
+    # Give the built image a name and tag for easy reference
+    image: deno-adder-app:latest
+    # Map a port from your VM to the container.
+    # Traffic to port 8080 on your VM will be sent to port 8000 inside the container.
+    ports:
+      - "8080:8000"
+    # Define the environment variables to pass into the container.
+    # The Deno app will read 'WELCOME_MESSAGE' and display its value on the page.
+    environment:
+      - WELCOME_MESSAGE=Hello from my Deno app, running via compose!
+    # A helpful policy to automatically restart the container if it crashes
+    # or if you reboot your VM.
+    restart: unless-stopped
