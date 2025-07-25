@@ -8,7 +8,9 @@ WORKDIR /app
 # Step 3: Install git. THIS IS THE NEW STEP.
 # First, run 'apt-get update' to refresh the package lists.
 # Then, run 'apt-get install -y git' to install the git client.
-RUN apt-get update && apt-get install -y --no-install-recommends git
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    ca-certificates
 
 # Step 4: Clone the Deno application's source code from its GitHub repository.
 # This pulls the main.ts and index.html files into the container.
