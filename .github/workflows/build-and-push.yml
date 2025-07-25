@@ -38,4 +38,5 @@ jobs:
           file: ./Containerfile
           push: true
           # Tag the image with the unique git commit SHA
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
