@@ -1,14 +1,14 @@
-name: Build and Push Container Image
+name: Build and Push Tagged Release
 
 on:
-  # Run automatically when you push to the main branch
+  # This workflow runs ONLY when you create and push a new tag starting with 'v'
   push:
-    branches: [ "main" ]
-  # Allow manual runs from the Actions tab
+    tags:
+      - 'v*'
+  # This also allows you to run it manually from the Actions tab
   workflow_dispatch:
 
 env:
-  # The image will be stored in GHCR under your username/repo_name
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Required to push to GHCR
+      # This permission is required to push images to GHCR
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -30,13 +31,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_PAT }}
 
-      - name: Build and push image from Containerfile
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push container image
         uses: docker/build-push-action@v5
         with:
-          # The context is the current directory, where the Containerfile is
           context: .
           file: ./Containerfile
           push: true
-          # Tag the image with the unique git commit SHA
+          # This automatically uses the Git tag (e.g., v1.0.0) as the image tag
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
